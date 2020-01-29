@@ -63,7 +63,7 @@ app.layout = html.Div(style = {'textAlign' : 'center'},
                                     html.Img(id = 'image-seen',src = imagenames[x],width = '500px',height = '250px',),
                                     html.Div(id='inference',children='Submit annotation for current image'),
                                     html.P(children = [ html.Div(id = 'prevend'),html.Button('Prev',id = 'prevbutton'),html.Button('Next', id = 'nextbutton'),html.Div(id = 'nextend')],),
-                                    html.Div(style = {'textAlign' : 'center','left':'50%','tranform':'translate(-50%,0)'},
+                                    html.Div(style = {'marginLeft':'500px'},
                                         children = [html.P(children = [dcc.Dropdown(id = 'condition',
                                                                         options = [ {'label' : i , 'value' : i} for i in ['condition one','condition two','not sure']], #list of conditions
                                                                         placeholder = "Select the condition",
