@@ -9,6 +9,19 @@ from flask import request
 #Grep imagenames list libraries
 import os
 import pathlib
+#database
+import sqlite3
+
+#used with sqlite3
+def removesymbolfromstring(symbol,s):
+    delimiter = symbol
+    x = s.split(delimiter)
+    print(x)
+    delimiter = ''
+    s = delimiter.join(x)
+    print(s)
+    return s
+
 
 #this fuction creates a list of images from the path.
 def imagelist(path) :
@@ -92,13 +105,38 @@ def slide_images(ncp,ncn,ncpts,ncnts,current_image_path):
     #Keys : Value #ncp = n_clicks_of_prev #ncn = n_clicks_of_next #ncpts = n_clicks_timestamp_of_prev #ncnts = n_clicks_timestamp_of_next
 
     #Timestamps used to determine between prev and next, which was clicked first.
-    print('Timestamp prev button: ',ncpts, '\nType : ',type(ncpts)) 
-    print('Timestamp next button : ',ncnts, '\nType : ',type(ncnts))
-    print('ncn : ',ncn)
-    print('ncp : ',ncp)
-    print("Current image : ",current_image_path)
-    print("Current image length : ",len(current_image_path))
-    print("Image index : ",imagenames.index(current_image_path))
+    #print('Timestamp prev button: ',ncpts, '\nType : ',type(ncpts)) 
+    #print('Timestamp next button : ',ncnts, '\nType : ',type(ncnts))
+    #print('ncn : ',ncn)
+    #print('ncp : ',ncp)
+    #print("Current image : ",current_image_path)
+    #print("Current image length : ",len(current_image_path))
+    #print("Image index : ",imagenames.index(current_image_path))
+    
+    #create table based on images.
+    #database
+    conn = sqlite3.connect('lebo.db')
+    #cursor
+    c = conn.cursor()
+    #create table
+    #Create table
+    c.execute("""CREATE TABLE IF NOT EXISTS userlabels(
+    	userid PRIMARY KEY
+    	username
+
+    	) WITHOUT ROWID"""
+    	)
+    for image in imagenames:
+    	newimage = image
+    	newimage = removesymbolfromstring('/',newimage)
+    	newimage = removesymbolfromstring('.',newimage)
+    	print(newimage)
+    	try : 
+        	addcolumnimage = "ALTER TABLE userlabels ADD COLUMN " +newimage+ " text"
+        	c.execute(addcolumnimage)
+    	except:
+        	pass
+    c.close()
     num_images = len(imagenames) 
 
     image_state = imagenames.index(current_image_path)
@@ -146,6 +184,29 @@ def slide_images(ncp,ncn,ncpts,ncnts,current_image_path):
 def update_output_div(n_clicks,input_value,image_path):
     print(image_path,len(image_path))
     username = request.authorization['username']
+
+    # connect sqlite3
+    conn = sqlite3.connect('lebo.db')
+    print("Database created")
+    #cursor
+    c = conn.cursor()
+    print("Cursor connected")
+    #create table if not exists
+    '''c.execute("""CREATE TABLE IF NOT EXISTS userlabels(
+    	userid PRIMARY KEY
+
+
+    	) WITHOUT ROWID"""
+    	)
+    print("Table created")
+    for image in imagenames:
+    	print(image)
+    	addcolumnimage = "ALTER TABLE userlabels ADD COLUMN " +image+ " text"
+    	print(addcolumnimage)
+    	#c.execute(addcolumnimage)
+    	print("column {} added ".format(image))
+    '''
+
     return 'You\'ve entered "{}" for image {} for user {}'.format(input_value,image_path[14:],username)
 
    
